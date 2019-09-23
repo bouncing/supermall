@@ -36,10 +36,10 @@ import FeatureView from './childComps/FeatureView'
 import TabControl from 'components/content/tabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
 import Scroll from 'components/common/scroll/Scroll'
-import BackTop from 'components/content/backTop/BackTop'
 
 import { getHomeMultidata, getHomeGoods } from 'network/home'
-import { debounce } from 'common/utils'
+// import { debounce } from 'common/utils'
+import { itemListenerMixin, backTopMixin } from 'common/mixin'
 
 export default {
   name: 'Home',
@@ -53,7 +53,6 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: 'pop',
-      isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0,
@@ -70,8 +69,8 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop
   },
+  mixins: [itemListenerMixin, backTopMixin],
   created () {
     this.getHomeMultidata()
     this.getHomeGoods('pop')
@@ -79,11 +78,6 @@ export default {
     this.getHomeGoods('sell')
   },
   mounted () {
-    // 监听事件总线
-    const refresh = debounce(this.$refs.scroll.refresh, 50)
-    this.$bus.$on('itemImageLoad', () => {
-      refresh()
-    })
   },
   activated () {
     this.$refs.scroll.refresh()
@@ -91,6 +85,9 @@ export default {
   },
   deactivated () {
     this.saveY = this.$refs.scroll.getScrollY()
+
+    // 取消全局事件的监听
+    this.$bus.$off('itemImgLoad', this.itemImgListener)
   },
   methods: {
     /**
@@ -130,9 +127,6 @@ export default {
       }
       this.$refs.tabControl1.currentIndex = index
       this.$refs.tabControl2.currentIndex = index
-    },
-    backClick () {
-      this.$refs.scroll.scrollTo(0, 0)
     },
     contentScroll (position) {
       this.isShowBackTop = (-position.y) > 1000
