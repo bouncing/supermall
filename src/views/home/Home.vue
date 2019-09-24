@@ -68,7 +68,7 @@ export default {
     FeatureView,
     TabControl,
     GoodsList,
-    Scroll,
+    Scroll
   },
   mixins: [itemListenerMixin, backTopMixin],
   created () {

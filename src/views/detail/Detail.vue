@@ -12,7 +12,7 @@
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop" />
 
-    <detail-bottom-bar />
+    <detail-bottom-bar @addCart="addToCart" />
   </div>
 </template>
 
@@ -78,8 +78,19 @@ export default {
       }
 
       this.isShowBackTop = (-position.y) > 1000
+    },
+    addToCart () {
+      // 获取购物车商品信息
+      const product = {}
+      product.image = this.topImages[0]
+      product.title = this.goods.title
+      product.desc = this.goods.desc
+      product.price = this.goods.realPrice
+      product.iid = this.iid
+      // console.log(product)
+      // this.$store.commit('addCart', product)
+      this.$store.dispatch('addCart', product)
     }
-
   },
   components: {
     DetailNavBar,
