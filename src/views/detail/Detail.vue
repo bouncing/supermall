@@ -32,7 +32,9 @@ import GoodsList from 'components/content/goods/GoodsList'
 import { getDetail, Goods, Shop, GoodsParam, getRecommend } from 'network/detail'
 // import { debounce } from 'common/utils'
 import { itemListenerMixin, backTopMixin } from 'common/mixin'
-import { debounce } from '../../common/utils'
+import { debounce } from 'common/utils'
+
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Detail',
@@ -53,6 +55,7 @@ export default {
   },
   mixins: [itemListenerMixin, backTopMixin],
   methods: {
+    ...mapActions(['addCart']),
     imageLoad () {
       this.refresh()
       this.getThemeTopY()
@@ -89,7 +92,12 @@ export default {
       product.iid = this.iid
       // console.log(product)
       // this.$store.commit('addCart', product)
-      this.$store.dispatch('addCart', product)
+      this.addCart(product).then(res => {
+        console.log(res)
+      })
+      // this.$store.dispatch('addCart', product).then(res => {
+      //   console.log(res)
+      // })
     }
   },
   components: {
